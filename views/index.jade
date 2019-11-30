@@ -1,0 +1,67 @@
+extends layout
+block content
+  .container
+    h2 Student attendance system
+    .success
+    .error
+    form(id='form1' action='/add' method= 'post')
+      input#id(type='hidden', name='id', value='')
+      table
+        tr
+          td(style='text-align: center')
+            input#student_name(type='text', name='student_name', placeholder='Student Name', value='')
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#usn(type='text', name='usn', placeholder='USN', value='')
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#branch(type='text', name='branch', placeholder='Branch', value='')
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#subbtn(type='submit', name='sub', value='Add Student')
+
+            
+    table
+      tbody
+        tr
+          th ID
+          th Student Name
+          th Usn
+          th Branch
+          th Action
+        if data.length
+         each item in data
+          tr
+            td #{item['_id']}
+            td #{item['student_name']}
+            td #{item['usn']}
+            td #{item['branch']}
+            td
+               a.editlink(href='javascript:void(0)', data-id='#{item["_id"]}') Edit
+               | &nbsp;&nbsp;
+               a(href='/delete?id=#{item["_id"]}', onclick='return confirm("You are going to delete this record. Continue?")') Delete
+           td
+          
+            input(type="checkbox",name="checkbox-control")
+            
+    script(src='https://code.jquery.com/jquery-3.1.1.min.js')
+    script.
+      $(function() { 
+        $('.editlink').on('click', function(){
+          var id = $(this).data('id');
+          $.ajax({
+            method: "GET",
+            url: "/fetchdata",
+            data: { id:  id },
+          }).done(function( data ) {
+            //var result = $.parseJSON(data);
+            $('#id').val(data[0]['_id']);
+            $('#student_name').val(data[0]['student_name']);
+            $('#usn').val(data[0]['usn']);
+            $('#branch').val(data[0]['branch']);
+            $("#subbtn").val('Edit Student');
+            $('#form1').attr('action', '/edit');
+
+          });
+          
+        });
+        
+      });
+
